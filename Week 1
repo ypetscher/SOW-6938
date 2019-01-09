@@ -1,0 +1,171 @@
+#Getting familiar with R
+#From: r-statistics.co by Selva Prabhakaran
+
+#Just in the console
+2+3
+2*3
+sqrt(4)
+sqrt(5.443)
+10/3
+
+#Assigning things
+a=2+3
+b<-2+3
+a
+b
+class(a)
+a=as.character(a)
+class(a)
+
+c='10'
+class(c)
+c=as.numeric(c)
+class(c)
+
+#VARIABLE TYPES
+character - Strings
+integer - Integers
+numeric - Integers + Fractions
+factor - Categorical variable where each level is a category
+logical - Boolean
+complex - Complex numbers
+
+#DATA TYPES
+vector - A collection of elements of same class
+matrix - All columns must uniformly contain only one variable type.
+data.frame - The columns can contain different classes.
+list - Can hold objects of different classes and lengths
+
+#Bringing in R-based and non-default package and utilities
+##what do you have?
+library()
+library(car)
+library(help=car)
+??car
+
+##what do you want?
+1) install it yourself
+  install.packages(XXXX)
+2) download it via .zip or .tar and install
+3) find and select
+
+#Getting ready
+help(merge)
+example(merge)
+
+#Where are you now
+getwd()
+setwd()
+
+#Read in and write out your data
+1) Use R import
+2) code it
+  a=read.csv("blah.csv")
+
+write.csv(cars,"C:/Users/ypetscher/Dropbox/Advanced Methods Class/output.csv")
+  
+#Let's play
+
+##overall things
+str(cars)
+summary(cars)
+mean(cars)
+
+#specific descriptives
+mean(cars$speed)
+sd(cars$speed)
+
+#edit data
+fluffy=edit(cars)
+
+
+#now with missing
+mean(fluffy$speed)
+sd(fluffy$speed)
+
+#specificity in code
+mean(fluffy$speed,na.rm=TRUE)
+sd(fluffy$speed,na.rm=TRUE)
+
+#how about correlations
+cor(cars$speed,cars$dist)
+
+#specificity in code matters
+cor(fluffy$speed,fluffy$dist)
+cor(fluffy$speed,fluffy$dist,na.rm=TRUE)
+cor(fluffy$speed,fluffy$dist,use = "complete.obs")
+
+mean(fluffy$speed,use = "complete.obs")
+sd(fluffy$speed,use = "complete.obs")
+
+#some graphing basics
+boxplot(cars$speed, main="Speed")
+boxplot(cars$dist, main="Distance") 
+par(mfrow=c(1, 2))
+
+plot(density(cars$speed), main="Density Plot: Speed", ylab="Frequency")
+plot(density(cars$dist), main="Density Plot: Distance", ylab="Frequency")
+par(mfrow=c(1, 2))
+
+scatterplot(dist ~ speed,data=cars)
+scatterplot(dist ~ speed,data=cars,boxplot=FALSE)
+scatterplot(dist ~ speed,data=cars,boxplot=FALSE,smooth=FALSE)
+
+#regression simple
+lm(dist~speed,data=cars)
+m1=lm(dist~speed,data=cars)
+summary(m1)
+AIC(m1)
+BIC(m1)
+
+#delving into plotting
+install.packages("ggplot2")
+library(ggplot2)
+str(diamonds)
+ggplot(diamonds) 
+ggplot(diamonds, aes(x=carat))
+ggplot(diamonds, aes(x=carat), color="steelblue")
+ggplot(diamonds, aes(x=carat, y=price))
+ggplot(diamonds, aes(x=carat, y=price,color=cut))
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point()
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point()+geom_smooth()
+ggplot(diamonds) + geom_point(aes(x=carat, y=price, color=cut)) + geom_smooth(aes(x=carat, y=price, color=cut))
+ggplot(diamonds) + geom_point(aes(x=carat, y=price, color=cut)) + geom_smooth(aes(x=carat, y=price)) 
+
+#reduced form
+ggplot(diamonds, aes(x=carat, y=price)) + geom_point(aes(color=cut)) + geom_smooth() 
+#manipulating the points
+ggplot(diamonds, aes(x=carat, y=price, color=cut, shape=color)) + geom_point()
+
+#some labeling
+graph1=ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point()+ labs(title="Bling Plot", x="Carat", y="Price")
+graph1
+
+#more advanced considerations for attributes
+graph2=graph1 + theme(plot.title=element_text(size=30, face="bold"), 
+           axis.text.x=element_text(size=15), 
+           axis.text.y=element_text(size=15),
+           axis.title.x=element_text(size=25),
+           axis.title.y=element_text(size=25)) + 
+  scale_color_discrete(name="Cut of diamonds")
+graph2
+
+#everything is smooshed, can we break out?
+graph1 + facet_wrap( ~ cut, ncol=3)
+graph1 + facet_wrap( color ~ cut, ncol=3)
+
+#finish weird
+library(scatterplot3d)
+
+shapes = c(16, 17, 18) 
+shapes <- shapes[as.numeric(iris$Species)]
+scatterplot3d(iris[,1:3], pch = shapes)
+
+colors <- c("#999999", "#E69F00", "#56B4E9")
+colors <- colors[as.numeric(iris$Species)]
+scatterplot3d(iris[,1:3], pch = 16, color=colors)
+
+library(rgl)
+str(iris)
+attach(iris)
+plot3d(Sepal.Length,Petal.Length,Sepal.Width)
